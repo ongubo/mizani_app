@@ -165,7 +165,7 @@ class Invitation {
       expiresAt.isAfter(DateTime.now());
 }
 
-enum ProposalStatus { draft, submitted, quoting, quotesShared, accepted, unknown }
+enum ProposalStatus { draft, submitted, quoting, quotesShared, accepted, declined, unknown }
 
 ProposalStatus _proposalStatus(String value) => switch (value) {
       'draft' => ProposalStatus.draft,
@@ -173,6 +173,7 @@ ProposalStatus _proposalStatus(String value) => switch (value) {
       'quoting' => ProposalStatus.quoting,
       'quotes_shared' => ProposalStatus.quotesShared,
       'accepted' => ProposalStatus.accepted,
+      'declined' => ProposalStatus.declined,
       _ => ProposalStatus.unknown,
     };
 

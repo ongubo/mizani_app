@@ -45,7 +45,7 @@ class ApiClient {
       return configured;
     }
     final isAndroid = !kIsWeb && Platform.isAndroid;
-    return isAndroid ? 'http://10.0.2.2:8000' : 'http://127.0.0.1:8000';
+    return isAndroid ? 'http://10.0.2.2:8005' : 'http://127.0.0.1:8005';
   }
 
   final Dio _dio;

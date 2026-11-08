@@ -32,6 +32,7 @@ class HomeTab extends StatelessWidget {
         final waiting = home.openProposals.where(
           (p) => p.status == ProposalStatus.submitted || p.status == ProposalStatus.quoting,
         );
+        final declined = home.openProposals.where((p) => p.status == ProposalStatus.declined);
         final isEmpty = invitations.isEmpty && home.openProposals.isEmpty;
 
         return RefreshIndicator(
@@ -70,6 +71,10 @@ class HomeTab extends StatelessWidget {
               if (waiting.isNotEmpty) ...[
                 const _SectionTitle('Waiting for quotes'),
                 ...waiting.map((p) => ProposalCard(proposal: p)),
+              ],
+              if (declined.isNotEmpty) ...[
+                const _SectionTitle('Could not be quoted'),
+                ...declined.map((p) => ProposalCard(proposal: p)),
               ],
               if (isEmpty) ...[
                 const SizedBox(height: 16),

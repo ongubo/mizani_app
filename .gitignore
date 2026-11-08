@@ -46,3 +46,6 @@ app.*.map.json
 
 # Claude Code
 /.claude/
+
+# Kotlin compiler sessions
+**/.kotlin/

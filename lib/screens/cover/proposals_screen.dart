@@ -75,7 +75,12 @@ class ProposalCard extends StatelessWidget {
     };
 
     if (next == null) {
-      showMessage(context, "We'll let you know as soon as your quotes are ready.");
+      showMessage(
+        context,
+        proposal.status == ProposalStatus.declined
+            ? 'The insurer could not offer a quote on this application.'
+            : "We'll let you know as soon as your quotes are ready.",
+      );
       return;
     }
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => next));
@@ -85,6 +90,7 @@ class ProposalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final (color, soft) = switch (proposal.status) {
       ProposalStatus.accepted => (MizaniColors.ok, MizaniColors.okSoft),
+      ProposalStatus.declined => (MizaniColors.bad, MizaniColors.badSoft),
       ProposalStatus.quotesShared => (MizaniColors.info, MizaniColors.infoSoft),
       ProposalStatus.quoting || ProposalStatus.submitted => (MizaniColors.warn, MizaniColors.warnSoft),
       _ => (MizaniColors.muted, MizaniColors.surface),
