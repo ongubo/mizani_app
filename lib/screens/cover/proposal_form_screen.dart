@@ -11,6 +11,7 @@ import '../../data/session.dart';
 import '../../models/models.dart';
 import '../../theme/mizani_theme.dart';
 import '../../widgets/api_loader.dart';
+import '../../widgets/document_viewer.dart';
 import 'question_field.dart';
 
 const _maxUploadBytes = 5 * 1024 * 1024;
@@ -342,6 +343,20 @@ class _ProposalFormState extends State<_ProposalForm> {
     }
   }
 
+  Future<void> _view(FormDocument document, ProposalDocument uploaded) {
+    final repository = _repository;
+    return openDocument(
+      context,
+      title: document.label,
+      fileName: uploaded.fileName,
+      download: (savePath) => repository.downloadProposalDocument(
+        widget.proposal.id,
+        key: document.key,
+        savePath: savePath,
+      ),
+    );
+  }
+
   Future<void> _remove(FormDocument document) => _run(() async {
         await _repository.removeDocument(widget.proposal.id, document.key);
         if (mounted) {
@@ -460,7 +475,21 @@ class _ProposalFormState extends State<_ProposalForm> {
             ),
             if (uploaded != null) ...[
               const SizedBox(height: 4),
-              Text(uploaded.fileName, style: const TextStyle(fontSize: 12, color: MizaniColors.ok)),
+              InkWell(
+                onTap: () => _view(document, uploaded),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.visibility_outlined, size: 16, color: MizaniColors.brand),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(uploaded.fileName, style: const TextStyle(fontSize: 12, color: MizaniColors.brand)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
             if (error != null) ...[
               const SizedBox(height: 4),

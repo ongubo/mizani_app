@@ -48,6 +48,7 @@ abstract class ClientRepository {
     void Function(double progress)? onProgress,
   });
   Future<void> removeDocument(String id, String key);
+  Future<void> downloadProposalDocument(String id, {required String key, required String savePath});
   Future<ProposalDetail> submitProposal(String id);
 
   Future<List<Quote>> quotes(String proposalId);
@@ -207,6 +208,10 @@ class ApiClientRepository implements ClientRepository {
   @override
   Future<void> removeDocument(String id, String key) =>
       _api.delete('/proposals/$id/documents/$key');
+
+  @override
+  Future<void> downloadProposalDocument(String id, {required String key, required String savePath}) =>
+      _api.download('/proposals/$id/documents/$key', savePath);
 
   @override
   Future<ProposalDetail> submitProposal(String id) async =>

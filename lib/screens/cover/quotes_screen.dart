@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/api_client.dart';
@@ -8,6 +6,7 @@ import '../../data/session.dart';
 import '../../models/models.dart';
 import '../../theme/mizani_theme.dart';
 import '../../widgets/api_loader.dart';
+import '../../widgets/document_viewer.dart';
 
 /// The quotes shared on an application, lowest premium first.
 class QuotesScreen extends StatelessWidget {
@@ -109,24 +108,17 @@ class _QuoteCardState extends State<_QuoteCard> {
   Future<void> _openDocument(QuoteDocument document) async {
     setState(() => _openingDocument = document.id);
     final repository = context.read<SessionController>().repository;
-    try {
-      final directory = await getTemporaryDirectory();
-      final extension = document.fileName.contains('.') ? document.fileName.split('.').last : 'pdf';
-      final path = '${directory.path}/${document.id}.$extension';
-      await repository.downloadQuoteDocument(
+    await openDocument(
+      context,
+      title: document.title,
+      fileName: document.fileName,
+      download: (savePath) => repository.downloadQuoteDocument(
         quoteId: _quote.id,
         documentId: document.id,
-        savePath: path,
-      );
-      final result = await OpenFilex.open(path);
-      if (result.type != ResultType.done && mounted) {
-        showMessage(context, 'No app on this phone can open that file.');
-      }
-    } on ApiException catch (e) {
-      if (mounted) showMessage(context, e.message);
-    } finally {
-      if (mounted) setState(() => _openingDocument = null);
-    }
+        savePath: savePath,
+      ),
+    );
+    if (mounted) setState(() => _openingDocument = null);
   }
 
   @override
@@ -193,7 +185,7 @@ class _QuoteCardState extends State<_QuoteCard> {
                   title: Text(document.title),
                   trailing: _openingDocument == document.id
                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                      : const Icon(Icons.download_outlined, size: 20),
+                      : const Icon(Icons.visibility_outlined, size: 20),
                   onTap: _openingDocument == null ? () => _openDocument(document) : null,
                 ),
             ],
